@@ -14,7 +14,7 @@ import {
 import { paths } from '../paths';
 
 const TTL = 5 * 60 * 60 * 1000;
-const TERMS = 'https://example.com/terms-and-contions';
+const TERMS = 'https://example.com/terms-and-conditions';
 
 interface Input {
   type: SupportedCType;

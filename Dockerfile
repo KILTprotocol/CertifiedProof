@@ -24,7 +24,7 @@ ENV PORT 3000
 ENV NODE_ENV production
 
 # get the dependencies and sources
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .env ./
 # install the production dependencies only (depends on NODE_ENV)
 RUN yarn install --frozen-lockfile --ignore-optional && yarn cache clean --all
 
