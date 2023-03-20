@@ -174,32 +174,15 @@ function Claim() {
 }
 
 function Home() {
-  const [cType, setCType] = useState<SupportedCType>();
-
   return (
     <section>
       <h1>KILT Attester Example</h1>
 
-      <label>
-        What type of credential would you like?
-        <select
-          value={cType}
-          onInput={(event) =>
-            setCType(event.currentTarget.value as SupportedCType)
-          }
-        >
-          <option value="">--Select a cType--</option>
-          {supportedCTypeKeys.map((cTypeKey) => (
-            <option key={cTypeKey} value={cTypeKey}>
-              {cTypeKey}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      {cType && (
-        <Link to={generatePath(paths.claim, { type: cType })}>Continue</Link>
-      )}
+      {supportedCTypeKeys.map((type) => (
+        <Link key={type} to={generatePath(paths.claim, { type })}>
+          {supportedCTypes[type].title}
+        </Link>
+      ))}
     </section>
   );
 }
