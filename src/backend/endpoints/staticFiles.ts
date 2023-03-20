@@ -13,3 +13,7 @@ staticFiles.use(
     },
   }),
 );
+
+staticFiles.get('*', (request, response) => {
+  response.sendFile(`${configuration.distFolder}/index.html`);
+});

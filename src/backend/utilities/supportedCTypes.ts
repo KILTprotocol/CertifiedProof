@@ -13,7 +13,11 @@ export const supportedCTypes: Record<SupportedCType, ICType> = {
   twitter: twitterCType,
 };
 
-export const cTypeCost: Record<SupportedCType, number> = {
-  email: 2,
-  twitter: 3,
+export const kiltCost: Record<SupportedCType, string> = {
+  email: '0.000000000000002',
+  twitter: '0.000000000000003',
 };
+
+export function isSupportedCType(cType: string): cType is SupportedCType {
+  return supportedCTypeKeys.includes(cType as SupportedCType);
+}

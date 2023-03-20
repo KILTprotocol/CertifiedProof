@@ -1,11 +1,22 @@
 import { createRoot } from 'react-dom/client';
 
-import { FormEvent, Fragment, useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import {
-  cTypeCost,
+  BrowserRouter,
+  generatePath,
+  Link,
+  Navigate,
+  Route,
+  Routes,
+  useParams,
+} from 'react-router-dom';
+
+import {
+  kiltCost,
   SupportedCType,
   supportedCTypes,
   supportedCTypeKeys,
+  isSupportedCType,
 } from '../backend/utilities/supportedCTypes';
 import {
   apiWindow,
@@ -14,6 +25,9 @@ import {
   Session,
 } from './utilities/session';
 import { exceptionToError } from './utilities/exceptionToError';
+
+import { paths } from './utilities/paths';
+import { BalanceUtils } from '@kiltprotocol/sdk-js';
 
 function Connect({ setSession }: { setSession: (s: Session) => void }) {
   const { kilt } = apiWindow;
@@ -107,16 +121,21 @@ function Connect({ setSession }: { setSession: (s: Session) => void }) {
   );
 }
 
-function Claim({ cTypeKey }: { cTypeKey: SupportedCType }) {
-  const cType = supportedCTypes[cTypeKey];
-
-  const { title, properties } = cType;
+function Claim() {
+  const { type } = useParams();
 
   const [session, setSession] = useState<Session>();
 
   const handleSubmit = useCallback(() => {
     // TODO: handle submit terms
   }, []);
+
+  if (!type || !isSupportedCType(type)) {
+    return <Navigate to={paths.notFound} replace />;
+  }
+
+  const cType = supportedCTypes[type];
+  const { title, properties } = cType;
 
   return (
     <section>
@@ -129,15 +148,6 @@ function Claim({ cTypeKey }: { cTypeKey: SupportedCType }) {
               <li key={property}>{property}</li>
             ))}
           </ul>
-
-          <p>
-            Cost:{' '}
-            {cTypeCost[cTypeKey].toLocaleString(undefined, {
-              style: 'currency',
-              currency: 'EUR',
-              currencyDisplay: 'code',
-            })}
-          </p>
 
           <Connect setSession={setSession} />
         </Fragment>
@@ -152,49 +162,58 @@ function Claim({ cTypeKey }: { cTypeKey: SupportedCType }) {
             </label>
           ))}
 
+          <p>{`Price: ${BalanceUtils.toFemtoKilt(kiltCost[type])} KILT`}</p>
+
           <button>Submit</button>
         </form>
+      )}
+
+      <Link to={paths.home}>Back</Link>
+    </section>
+  );
+}
+
+function Home() {
+  const [cType, setCType] = useState<SupportedCType>();
+
+  return (
+    <section>
+      <h1>KILT Attester Example</h1>
+
+      <label>
+        What type of credential would you like?
+        <select
+          value={cType}
+          onInput={(event) =>
+            setCType(event.currentTarget.value as SupportedCType)
+          }
+        >
+          <option value="">--Select a cType--</option>
+          {supportedCTypeKeys.map((cTypeKey) => (
+            <option key={cTypeKey} value={cTypeKey}>
+              {cTypeKey}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      {cType && (
+        <Link to={generatePath(paths.claim, { type: cType })}>Continue</Link>
       )}
     </section>
   );
 }
 
-function App() {
-  const [cTypeKey, setCTypeKey] = useState<SupportedCType>();
-
-  const handleSubmit = useCallback((event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-    const cType = formData.get('cType') as SupportedCType;
-    setCTypeKey(cType);
-  }, []);
-
-  return (
-    <Fragment>
-      <h1>KILT Attester Example</h1>
-
-      {!cTypeKey && (
-        <form onSubmit={handleSubmit}>
-          <label>
-            What type of credential would you like?
-            <select name="cType">
-              <option value="">--Select a cType--</option>
-              {supportedCTypeKeys.map((cTypeKey) => (
-                <option key={cTypeKey} value={cTypeKey}>
-                  {cTypeKey}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <button>Continue</button>
-        </form>
-      )}
-
-      {cTypeKey && <Claim cTypeKey={cTypeKey} />}
-    </Fragment>
-  );
-}
-
 const root = createRoot(document.querySelector('#app') as HTMLElement);
-root.render(<App />);
+root.render(
+  <BrowserRouter>
+    <Routes>
+      <Route path={paths.home} element={<Home />} />
+      <Route path={paths.claim} element={<Claim />} />
+      {/* TODO: Admin route */}
+
+      <Route path={paths.notFound} element={<p>404 - Not found</p>} />
+      <Route path="*" element={<Navigate to={paths.notFound} replace />} />
+    </Routes>
+  </BrowserRouter>,
+);
