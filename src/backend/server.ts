@@ -5,6 +5,7 @@ import { didDocumentPromise } from './utilities/didDocument';
 import { configuration } from './utilities/configuration';
 import { logger } from './utilities/logger';
 
+import { session } from './endpoints/session';
 import { staticFiles } from './endpoints/staticFiles';
 
 (async () => {
@@ -14,6 +15,7 @@ import { staticFiles } from './endpoints/staticFiles';
   const app = express();
   app.use(bodyParser.json());
 
+  app.use(session);
   app.use(staticFiles);
 
   logger.info('Routes configured');
