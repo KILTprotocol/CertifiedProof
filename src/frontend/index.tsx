@@ -13,7 +13,6 @@ import {
 
 import {
   kiltCost,
-  SupportedCType,
   supportedCTypes,
   supportedCTypeKeys,
   isSupportedCType,
