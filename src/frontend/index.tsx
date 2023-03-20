@@ -177,11 +177,15 @@ function Home() {
     <section>
       <h1>KILT Attester Example</h1>
 
-      {supportedCTypeKeys.map((type) => (
-        <Link key={type} to={generatePath(paths.claim, { type })}>
-          {supportedCTypes[type].title}
-        </Link>
-      ))}
+      <ul>
+        {supportedCTypeKeys.map((type) => (
+          <li key={type}>
+            <Link to={generatePath(paths.claim, { type })}>
+              {supportedCTypes[type].title}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
