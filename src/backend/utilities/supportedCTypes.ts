@@ -13,9 +13,12 @@ export const supportedCTypes: Record<SupportedCType, ICType> = {
   twitter: twitterCType,
 };
 
-export const kiltCost: Record<SupportedCType, string> = {
-  email: '0.000000000000002',
-  twitter: '0.000000000000003',
+export const kiltCost: Record<
+  SupportedCType,
+  { raw: string; formatted: string }
+> = {
+  email: { raw: '0.000000000000002', formatted: '2 microKILT' },
+  twitter: { raw: '0.000000000000002', formatted: '3 microKILT' },
 };
 
 export function isSupportedCType(cType: string): cType is SupportedCType {

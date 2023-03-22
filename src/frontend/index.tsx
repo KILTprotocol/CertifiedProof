@@ -5,7 +5,6 @@ import {
   BrowserRouter,
   generatePath,
   Link,
-  Navigate,
   Route,
   Routes,
   useParams,
@@ -26,7 +25,6 @@ import {
 import { exceptionToError } from './utilities/exceptionToError';
 
 import { paths } from './utilities/paths';
-import { BalanceUtils } from '@kiltprotocol/sdk-js';
 
 function Connect({ setSession }: { setSession: (s: Session) => void }) {
   const { kilt } = apiWindow;
@@ -102,7 +100,7 @@ function Connect({ setSession }: { setSession: (s: Session) => void }) {
       {error === 'rejected' && (
         <p>
           The authorization was rejected. Follow the instructions on our Tech
-          Support site to establish the connection between this verifier and
+          Support site to establish the connection between this attester and
           your wallet.
         </p>
       )}
@@ -130,7 +128,7 @@ function Claim() {
   }, []);
 
   if (!type || !isSupportedCType(type)) {
-    return <Navigate to={paths.notFound} replace />;
+    return <p>Error - Unsupported CType</p>;
   }
 
   const cType = supportedCTypes[type];
@@ -161,7 +159,7 @@ function Claim() {
             </label>
           ))}
 
-          <p>{`Price: ${BalanceUtils.toFemtoKilt(kiltCost[type])} KILT`}</p>
+          <p>Price: {kiltCost[type].formatted}</p>
 
           <button>Submit</button>
         </form>
@@ -198,8 +196,7 @@ root.render(
       <Route path={paths.claim} element={<Claim />} />
       {/* TODO: Admin route */}
 
-      <Route path={paths.notFound} element={<p>404 - Not found</p>} />
-      <Route path="*" element={<Navigate to={paths.notFound} replace />} />
+      <Route path="*" element={<p>404 - Not found</p>} />
     </Routes>
   </BrowserRouter>,
 );
