@@ -159,7 +159,7 @@ function Claim() {
             </label>
           ))}
 
-          <p>Price: {kiltCost[type].formatted}</p>
+          <p>Price: {kiltCost[type]} KILT</p>
 
           <button>Submit</button>
         </form>
