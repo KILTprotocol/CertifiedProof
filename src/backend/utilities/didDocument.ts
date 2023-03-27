@@ -49,8 +49,6 @@ async function compareAllKeys(fullDid: DidDocument): Promise<void> {
 export const didDocumentPromise = (async () => {
   await initKilt();
 
-  console.log('initialized Kilt');
-
   const { did } = configuration;
   if (!did) {
     throw new Error('DID not configured, have you run createDID script?');
@@ -66,6 +64,11 @@ export const didDocumentPromise = (async () => {
   const { document } = resolved;
   await compareAllKeys(document);
 
+  const authenticationKey = document.authentication?.[0];
+  if (!authenticationKey) {
+    throw new Error('Impossible: authentication key not found');
+  }
+
   const assertionMethodKey = document.assertionMethod?.[0];
   if (!assertionMethodKey) {
     throw new Error('Impossible: assertion method key not found');
@@ -79,7 +82,8 @@ export const didDocumentPromise = (async () => {
   return {
     did,
     didDocument: document,
-    keyAgreementKey,
+    authenticationKey,
     assertionMethodKey,
+    keyAgreementKey,
   };
 })();
