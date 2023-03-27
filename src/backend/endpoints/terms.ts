@@ -13,6 +13,9 @@ import {
 } from '../utilities/supportedCTypes';
 import { paths } from './paths';
 
+const TIMEFRAME = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+const TERMS = 'https://example.com/terms-and-contions';
+
 interface Input {
   type: SupportedCType;
   claimContents: IClaimContents;
@@ -38,8 +41,8 @@ async function handler(request: Request, response: Response): Promise<void> {
       cTypeHash: claim.cTypeHash,
       cost: { tax: { VAT: 0 }, net: kiltCost[type], gross: kiltCost[type] },
       currency: 'KILT',
-      timeframe: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
-      termsAndConditions: '[Link to your terms and conditions here]',
+      timeframe: TIMEFRAME,
+      termsAndConditions: TERMS,
     };
 
     const signedQuote = await Quote.createAttesterSignedQuote(quote, sign);

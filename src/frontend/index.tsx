@@ -10,12 +10,9 @@ import {
   useParams,
 } from 'react-router-dom';
 
-import {
-  kiltCost,
-  supportedCTypes,
-  supportedCTypeKeys,
-  isSupportedCType,
-} from '../backend/utilities/supportedCTypes';
+import ky from 'ky';
+import { IClaimContents, IEncryptedMessage } from '@kiltprotocol/sdk-js';
+
 import {
   apiWindow,
   getCompatibleExtensions,
@@ -23,21 +20,41 @@ import {
   Session,
 } from './utilities/session';
 import { exceptionToError } from './utilities/exceptionToError';
-
 import { paths } from './utilities/paths';
-import ky from 'ky';
+
+import {
+  kiltCost,
+  supportedCTypes,
+  supportedCTypeKeys,
+  isSupportedCType,
+} from '../backend/utilities/supportedCTypes';
 import { paths as apiPaths } from '../backend/endpoints/paths';
 import { sessionHeader } from '../backend/endpoints/sessionHeader';
-import { IClaimContents, IEncryptedMessage } from '@kiltprotocol/sdk-js';
 
-type Error = 'closed' | 'unauthorized' | 'unknown';
+type FlowError = 'closed' | 'unauthorized' | 'unknown';
 
-const errors: Record<Error, string> = {
-  closed: 'Your wallet was closed. Please try again.',
-  unauthorized:
-    'The authorization was rejected. Follow the instructions on our Tech Support site to establish the connection between this attester and your wallet.',
-  unknown:
-    'Something went wrong! Try again or reload the page or restart your browser.',
+const errors: Record<FlowError, JSX.Element> = {
+  closed: <p>Your wallet was closed. Please try again.</p>,
+  unauthorized: (
+    <p>
+      The authorization was rejected. Follow the instructions on our Tech
+      Support site to establish the connection between this attester and your
+      wallet.
+      <a
+        href="https://support.kilt.io/support/solutions/articles/80000968082-how-to-grant-access-to-website"
+        target="_blank"
+        rel="noreferrer"
+      >
+        Tech Support
+      </a>
+    </p>
+  ),
+  unknown: (
+    <p>
+      Something went wrong! Try again or reload the page or restart your
+      browser.
+    </p>
+  ),
 };
 
 function Connect({ onConnect }: { onConnect: (s: Session) => void }) {
@@ -46,7 +63,7 @@ function Connect({ onConnect }: { onConnect: (s: Session) => void }) {
   const [extensions, setExtensions] = useState(getCompatibleExtensions());
 
   const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState<Error>();
+  const [error, setError] = useState<FlowError>();
 
   useEffect(() => {
     function handler() {
@@ -102,7 +119,7 @@ function Connect({ onConnect }: { onConnect: (s: Session) => void }) {
 
       {processing && <p>Connecting…</p>}
 
-      {error && <p>{errors[error]}</p>}
+      {error && errors[error]}
     </section>
   );
 }
@@ -116,7 +133,7 @@ function Claim() {
     'start' | 'connected' | 'requested' | 'paid'
   >('start');
 
-  const [error, setError] = useState<Error>();
+  const [error, setError] = useState<FlowError>();
 
   const handleConnect = useCallback((session: Session) => {
     setSession(session);
@@ -132,11 +149,11 @@ function Claim() {
         return;
       }
 
-      const claimContents: IClaimContents = {};
-      const formData = new FormData(event.currentTarget);
-      for (const entry of formData.entries()) {
-        claimContents[entry[0]] = entry[1] as string;
-      }
+      const claimContents: IClaimContents = Object.fromEntries(
+        new FormData(event.currentTarget).entries() as IterableIterator<
+          [string, string]
+        >,
+      );
 
       try {
         const { sessionId } = session;
@@ -250,7 +267,7 @@ function Claim() {
         </p>
       )}
 
-      {error && <p>{errors[error]}</p>}
+      {error && errors[error]}
 
       <Link to={paths.home}>Back</Link>
     </section>

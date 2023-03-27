@@ -1,4 +1,4 @@
-import { Credential, Message, Quote } from '@kiltprotocol/sdk-js';
+import { Credential, CType, Message, Quote } from '@kiltprotocol/sdk-js';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { decrypt } from '../utilities/cryptoCallbacks';
@@ -8,6 +8,7 @@ import {
   sessionMiddleware,
   setSession,
 } from '../utilities/sessionStorage';
+import { supportedCTypes } from '../utilities/supportedCTypes';
 import { paths } from './paths';
 
 async function handler(request: Request, response: Response): Promise<void> {
@@ -40,9 +41,17 @@ async function handler(request: Request, response: Response): Promise<void> {
     await Credential.verifyCredential(credential);
     logger.debug('Credential data structure verified');
 
+    const cTypes = Object.values(supportedCTypes);
+    const cTypeId = CType.hashToId(credential.claim.cTypeHash);
+    if (!cTypes.find(({ $id }) => $id === cTypeId)) {
+      response.status(StatusCodes.FORBIDDEN).send('Unsupported CType');
+    }
+    logger.debug('CType supported');
+
     const { session } = request as Request & { session: Session };
     setSession({ ...session, credential });
 
+    logger.debug('Request attestation complete');
     response.sendStatus(StatusCodes.NO_CONTENT);
   } catch (error) {
     response.status(StatusCodes.INTERNAL_SERVER_ERROR).send(error);
