@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
-import { Fragment, useCallback, useEffect, useState } from 'react';
+import { FormEvent, Fragment, useCallback, useEffect, useState } from 'react';
 import {
   BrowserRouter,
   generatePath,
@@ -25,14 +25,28 @@ import {
 import { exceptionToError } from './utilities/exceptionToError';
 
 import { paths } from './utilities/paths';
+import ky from 'ky';
+import { paths as apiPaths } from '../backend/endpoints/paths';
+import { sessionHeader } from '../backend/endpoints/sessionHeader';
+import { IClaimContents, IEncryptedMessage } from '@kiltprotocol/sdk-js';
 
-function Connect({ setSession }: { setSession: (s: Session) => void }) {
+type Error = 'closed' | 'unauthorized' | 'unknown';
+
+const errors: Record<Error, string> = {
+  closed: 'Your wallet was closed. Please try again.',
+  unauthorized:
+    'The authorization was rejected. Follow the instructions on our Tech Support site to establish the connection between this attester and your wallet.',
+  unknown:
+    'Something went wrong! Try again or reload the page or restart your browser.',
+};
+
+function Connect({ onConnect }: { onConnect: (s: Session) => void }) {
   const { kilt } = apiWindow;
 
   const [extensions, setExtensions] = useState(getCompatibleExtensions());
 
   const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState<'closed' | 'rejected' | 'unknown'>();
+  const [error, setError] = useState<Error>();
 
   useEffect(() => {
     function handler() {
@@ -51,13 +65,13 @@ function Connect({ setSession }: { setSession: (s: Session) => void }) {
         setProcessing(true);
         setError(undefined);
 
-        setSession(await getSession(kilt[extension]));
+        onConnect(await getSession(kilt[extension]));
       } catch (exception) {
         const { message } = exceptionToError(exception);
         if (message.includes('closed')) {
           setError('closed');
         } else if (message.includes('Not authorized')) {
-          setError('rejected');
+          setError('unauthorized');
         } else {
           setError('unknown');
           console.error(exception);
@@ -65,7 +79,7 @@ function Connect({ setSession }: { setSession: (s: Session) => void }) {
         setProcessing(false);
       }
     },
-    [setSession, kilt],
+    [onConnect, kilt],
   );
   return (
     <section>
@@ -88,32 +102,7 @@ function Connect({ setSession }: { setSession: (s: Session) => void }) {
 
       {processing && <p>Connecting…</p>}
 
-      {error === 'unknown' && (
-        <p>
-          Something went wrong! Try again or reload the page or restart your
-          browser.
-        </p>
-      )}
-
-      {error === 'closed' && <p>Your wallet was closed. Please try again.</p>}
-
-      {error === 'rejected' && (
-        <p>
-          The authorization was rejected. Follow the instructions on our Tech
-          Support site to establish the connection between this attester and
-          your wallet.
-        </p>
-      )}
-
-      {error === 'rejected' && (
-        <a
-          href="https://support.kilt.io/support/solutions/articles/80000968082-how-to-grant-access-to-website"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Tech Support
-        </a>
-      )}
+      {error && <p>{errors[error]}</p>}
     </section>
   );
 }
@@ -123,9 +112,91 @@ function Claim() {
 
   const [session, setSession] = useState<Session>();
 
-  const handleSubmit = useCallback(() => {
-    // TODO: handle submit terms
+  const [status, setStatus] = useState<
+    'start' | 'connected' | 'requested' | 'paid'
+  >('start');
+
+  const [error, setError] = useState<Error>();
+
+  const handleConnect = useCallback((session: Session) => {
+    setSession(session);
+    setStatus('connected');
   }, []);
+
+  const handleClaim = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      setError(undefined);
+
+      if (!session || !type || !isSupportedCType(type)) {
+        return;
+      }
+
+      const claimContents: IClaimContents = {};
+      const formData = new FormData(event.currentTarget);
+      for (const entry of formData.entries()) {
+        claimContents[entry[0]] = entry[1] as string;
+      }
+
+      try {
+        const { sessionId } = session;
+        const headers = { [sessionHeader]: sessionId };
+        // define in advance how to handle the response from the extension
+        await session.listen(async (message) => {
+          await ky.post(apiPaths.requestAttestation, {
+            headers,
+            json: message,
+          });
+          setStatus('requested');
+        });
+
+        // encrypt submit-terms message on the backend
+        const message: IEncryptedMessage = await ky
+          .post(apiPaths.terms, {
+            headers,
+            json: { type, claimContents },
+          })
+          .json();
+
+        // forward the encrypted message to the extension
+        await session.send(message);
+      } catch (exception) {
+        const { message } = exceptionToError(exception);
+        if (message.includes('closed') || message.includes('Conflict')) {
+          setError('closed');
+        } else if (message.includes('Not authorized')) {
+          setError('unauthorized');
+        } else {
+          setError('unknown');
+          console.error(exception);
+        }
+      }
+    },
+    [session, type],
+  );
+
+  // implement your preferred payment service
+  const handlePayment = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      setError(undefined);
+
+      if (!session) {
+        return;
+      }
+
+      try {
+        const { sessionId } = session;
+        const headers = { [sessionHeader]: sessionId };
+        await ky.post(apiPaths.pay, { headers });
+        setStatus('paid');
+      } catch (error) {
+        console.error(error);
+        setError('unknown');
+      }
+    },
+    [session],
+  );
 
   if (!type || !isSupportedCType(type)) {
     return <p>Error - Unsupported CType</p>;
@@ -138,7 +209,7 @@ function Claim() {
     <section>
       <h2>{title}</h2>
 
-      {!session && (
+      {status === 'start' && (
         <Fragment>
           <ul>
             {Object.keys(properties).map((property) => (
@@ -146,13 +217,13 @@ function Claim() {
             ))}
           </ul>
 
-          <Connect setSession={setSession} />
+          <Connect onConnect={handleConnect} />
         </Fragment>
       )}
 
-      {session && (
-        // implement custom claim form if you want to handle non-string properties
-        <form onSubmit={handleSubmit}>
+      {status === 'connected' && (
+        // implement custom claim forms if you want to handle non-string properties
+        <form onSubmit={handleClaim}>
           {Object.keys(properties).map((property) => (
             <label key={property}>
               {property} <input name={property} required />
@@ -164,6 +235,22 @@ function Claim() {
           <button>Submit</button>
         </form>
       )}
+
+      {status === 'requested' && (
+        <form onSubmit={handlePayment}>
+          <p>Thanks for your request. Please pay</p>
+          <button>Pay</button>
+        </form>
+      )}
+
+      {status === 'paid' && (
+        <p>
+          Thanks for your payment! Your request has been sent to the attester
+          for processing. You can check the attestation status in your wallet.
+        </p>
+      )}
+
+      {error && <p>{errors[error]}</p>}
 
       <Link to={paths.home}>Back</Link>
     </section>

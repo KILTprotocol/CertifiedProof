@@ -7,6 +7,9 @@ import { logger } from './utilities/logger';
 
 import { session } from './endpoints/session';
 import { staticFiles } from './endpoints/staticFiles';
+import { terms } from './endpoints/terms';
+import { requestAttestation } from './endpoints/requestAttestation';
+import { pay } from './endpoints/pay';
 
 (async () => {
   await didDocumentPromise;
@@ -16,6 +19,9 @@ import { staticFiles } from './endpoints/staticFiles';
   app.use(bodyParser.json());
 
   app.use(session);
+  app.use(terms);
+  app.use(requestAttestation);
+  app.use(pay);
   app.use(staticFiles);
 
   logger.info('Routes configured');

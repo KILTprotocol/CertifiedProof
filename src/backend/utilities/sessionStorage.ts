@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import NodeCache from 'node-cache';
-import { DidResourceUri, DidUri } from '@kiltprotocol/sdk-js';
+import { DidResourceUri, DidUri, ICredential } from '@kiltprotocol/sdk-js';
 
 import { sessionHeader } from '../endpoints/sessionHeader';
 
@@ -11,7 +11,7 @@ export interface BasicSession {
   encryptionKeyUri?: DidResourceUri;
   didChallenge?: string;
   didConfirmed?: boolean;
-  requestChallenge?: string;
+  credential?: ICredential;
 }
 
 export type Session = BasicSession & {
@@ -19,7 +19,7 @@ export type Session = BasicSession & {
   encryptionKeyUri: DidResourceUri;
 };
 
-const sessionStorage = new NodeCache({ stdTTL: 60 * 60, useClones: false });
+const sessionStorage = new NodeCache({ stdTTL: 5 * 60 * 60, useClones: false });
 
 function getSessionById(sessionId: string): BasicSession {
   const session = sessionStorage.get(sessionId);
