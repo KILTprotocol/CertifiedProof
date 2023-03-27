@@ -149,11 +149,9 @@ function Claim() {
         return;
       }
 
-      const claimContents: IClaimContents = Object.fromEntries(
-        new FormData(event.currentTarget).entries() as IterableIterator<
-          [string, string]
-        >,
-      );
+      const claimContents = Object.fromEntries(
+        new FormData(event.currentTarget).entries(),
+      ) as IClaimContents;
 
       try {
         const { sessionId } = session;

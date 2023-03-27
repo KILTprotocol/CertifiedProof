@@ -13,7 +13,7 @@ import {
 } from '../utilities/supportedCTypes';
 import { paths } from './paths';
 
-const TIMEFRAME = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+const TTL = 5 * 60 * 60 * 1000;
 const TERMS = 'https://example.com/terms-and-contions';
 
 interface Input {
@@ -41,7 +41,7 @@ async function handler(request: Request, response: Response): Promise<void> {
       cTypeHash: claim.cTypeHash,
       cost: { tax: { VAT: 0 }, net: kiltCost[type], gross: kiltCost[type] },
       currency: 'KILT',
-      timeframe: TIMEFRAME,
+      timeframe: new Date(Date.now() + TTL).toISOString(),
       termsAndConditions: TERMS,
     };
 
