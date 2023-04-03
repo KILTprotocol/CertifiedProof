@@ -50,6 +50,12 @@ if (!blockchainEndpoint) {
   throw new ConfigurationError('No blockchain endpoint provided');
 }
 
+const adminUsername = env.ADMIN_USERNAME;
+const adminPassword = env.ADMIN_PASSWORD;
+if (!adminUsername || !adminPassword) {
+  throw new ConfigurationError('Admin credentials missing');
+}
+
 export const configuration = {
   port: parseInt(env.PORT as string) || 3000,
   blockchainEndpoint,
@@ -60,4 +66,6 @@ export const configuration = {
   authenticationMnemonic,
   assertionMethodMnemonic,
   keyAgreementMnemonic,
+  adminUsername,
+  adminPassword,
 };

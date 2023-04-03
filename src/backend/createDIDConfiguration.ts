@@ -14,7 +14,7 @@ import {
     `Generating the .well-known/did-configuration.json file for DID ${configuration.did} and host ${configuration.baseUri}`,
   );
 
-  const wellKnown = join(configuration.distFolder, '.well-known');
+  const wellKnown = join(configuration.distFolder, 'user', '.well-known');
   try {
     await lstat(wellKnown);
   } catch (error) {
