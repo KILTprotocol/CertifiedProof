@@ -18,18 +18,18 @@ import {
   getCompatibleExtensions,
   getSession,
   Session,
-} from './utilities/session';
-import { exceptionToError } from './utilities/exceptionToError';
-import { paths } from './utilities/paths';
+} from '../utilities/session';
+import { exceptionToError } from '../utilities/exceptionToError';
+import { paths } from '../utilities/paths';
 
 import {
   kiltCost,
   supportedCTypes,
   supportedCTypeKeys,
   isSupportedCType,
-} from '../backend/utilities/supportedCTypes';
-import { paths as apiPaths } from '../backend/endpoints/paths';
-import { sessionHeader } from '../backend/endpoints/sessionHeader';
+} from '../../backend/utilities/supportedCTypes';
+import { paths as apiPaths } from '../../backend/endpoints/paths';
+import { sessionHeader } from '../../backend/endpoints/sessionHeader';
 
 type FlowError = 'closed' | 'unauthorized' | 'unknown';
 
@@ -296,7 +296,6 @@ root.render(
     <Routes>
       <Route path={paths.home} element={<Home />} />
       <Route path={paths.claim} element={<Claim />} />
-      {/* TODO: Admin route */}
 
       <Route path="*" element={<p>404 - Not found</p>} />
     </Routes>

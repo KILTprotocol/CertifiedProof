@@ -5,11 +5,9 @@ import { didDocumentPromise } from './utilities/didDocument';
 import { configuration } from './utilities/configuration';
 import { logger } from './utilities/logger';
 
-import { session } from './endpoints/session';
-import { staticFiles } from './endpoints/staticFiles';
-import { terms } from './endpoints/terms';
-import { requestAttestation } from './endpoints/requestAttestation';
-import { pay } from './endpoints/pay';
+import { auth } from './utilities/auth';
+import { adminRouter } from './routers/admin';
+import { userRouter } from './routers/user';
 
 (async () => {
   await didDocumentPromise;
@@ -18,11 +16,8 @@ import { pay } from './endpoints/pay';
   const app = express();
   app.use(bodyParser.json());
 
-  app.use(session);
-  app.use(terms);
-  app.use(requestAttestation);
-  app.use(pay);
-  app.use(staticFiles);
+  app.use('/admin', auth, adminRouter);
+  app.use('/', userRouter);
 
   logger.info('Routes configured');
 
