@@ -4,16 +4,16 @@ import { StatusCodes } from 'http-status-codes';
 import { Did, DidResourceUri, Utils } from '@kiltprotocol/sdk-js';
 import { randomAsHex } from '@polkadot/util-crypto';
 
-import { didDocumentPromise } from '../utilities/didDocument';
-import { decrypt } from '../utilities/cryptoCallbacks';
+import { didDocumentPromise } from '../../utilities/didDocument';
+import { decrypt } from '../../utilities/cryptoCallbacks';
 import {
   BasicSession,
   basicSessionMiddleware,
   setSession,
-} from '../utilities/sessionStorage';
-import { logger } from '../utilities/logger';
+} from '../../utilities/sessionStorage';
+import { logger } from '../../utilities/logger';
 
-import { paths } from './paths';
+import { paths } from '../paths';
 
 export interface CheckSessionInput {
   encryptionKeyUri: DidResourceUri;

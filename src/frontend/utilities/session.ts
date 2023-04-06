@@ -3,7 +3,7 @@ import type { DidResourceUri, IEncryptedMessage } from '@kiltprotocol/sdk-js';
 import {
   checkSession,
   getSessionValues,
-} from '../../backend/endpoints/sessionApi';
+} from '../../backend/endpoints/user/sessionApi';
 
 interface PubSubSession {
   listen: (

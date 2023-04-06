@@ -1,7 +1,7 @@
 import ky from 'ky';
 
 import { CheckSessionInput, GetSessionOutput } from './session';
-import { paths } from './paths';
+import { paths } from '../paths';
 import { sessionHeader } from './sessionHeader';
 
 export async function getSessionValues(): Promise<GetSessionOutput> {

@@ -3,4 +3,10 @@ export const paths = {
   terms: '/api/terms',
   requestAttestation: '/api/request-attestation',
   pay: '/api/pay',
+
+  // admin
+  credentials: {
+    list: '/api/credentials',
+    item: '/api/credentials/:id',
+  },
 };
