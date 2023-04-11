@@ -27,15 +27,19 @@ function Credential() {
   });
 
   const [credential, setCredential] = useState<Credential>();
+  const [error, setError] = useState(false);
+
   useEffect(() => {
     (async () => {
-      setCredential(await ky.get(apiPath).json());
+      try {
+        setCredential(await ky.get(apiPath).json());
+      } catch {
+        setError(true);
+      }
     })();
   }, [apiPath]);
 
   const [processing, setProcessing] = useState(false);
-  const [error, setError] = useState(false);
-
   const handleAttest = useCallback(async () => {
     try {
       setError(false);
@@ -75,7 +79,7 @@ function Credential() {
   }, []);
 
   if (!credential) {
-    return null;
+    return error ? <p>Credential not found</p> : null;
   }
 
   const { claim, attestation } = credential;
@@ -122,38 +126,47 @@ function Credentials({ credentials }: { credentials: [string, Credential][] }) {
 }
 
 function Admin() {
-  const [credentials, setCredentials] = useState<[string, Credential][]>([]);
+  const [credentials, setCredentials] = useState<[string, Credential][]>();
+  const [error, setError] = useState(false);
 
-  const pendingCredentials = credentials.filter(
+  const pendingCredentials = credentials?.filter(
     ([, { attestation }]) => !attestation,
   );
-  const attestedCredentials = credentials.filter(
+  const attestedCredentials = credentials?.filter(
     ([, { attestation }]) => attestation && !attestation.revoked,
   );
 
   useEffect(() => {
     (async () => {
-      const credentials = await ky
-        .get(generateAdminApiPath(apiPaths.credentials.list))
-        .json<Record<string, Credential>>();
+      try {
+        const credentials = await ky
+          .get(generateAdminApiPath(apiPaths.credentials.list))
+          .json<Record<string, Credential>>();
 
-      setCredentials(Object.entries(credentials));
+        setCredentials(Object.entries(credentials));
+      } catch {
+        setError(true);
+      }
     })();
   }, []);
+
+  if (!credentials) {
+    return error ? <p>Unable to fetch credentials</p> : null;
+  }
 
   return (
     <section>
       <h1>Admin</h1>
       {credentials.length === 0 && <p>No credentials</p>}
 
-      {pendingCredentials.length > 0 && (
+      {pendingCredentials && pendingCredentials.length > 0 && (
         <section>
           <h2>Pending credentials</h2>
           <Credentials credentials={pendingCredentials} />
         </section>
       )}
 
-      {attestedCredentials.length > 0 && (
+      {attestedCredentials && attestedCredentials.length > 0 && (
         <section>
           <h2>Attested credentials</h2>
           <Credentials credentials={attestedCredentials} />
