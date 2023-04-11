@@ -1,15 +1,15 @@
 import { Credential, CType, Message, Quote } from '@kiltprotocol/sdk-js';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { decrypt } from '../utilities/cryptoCallbacks';
-import { logger } from '../utilities/logger';
+import { decrypt } from '../../utilities/cryptoCallbacks';
+import { logger } from '../../utilities/logger';
 import {
   Session,
   sessionMiddleware,
   setSession,
-} from '../utilities/sessionStorage';
-import { supportedCTypes } from '../utilities/supportedCTypes';
-import { paths } from './paths';
+} from '../../utilities/sessionStorage';
+import { supportedCTypes } from '../../utilities/supportedCTypes';
+import { paths } from '../paths';
 
 async function handler(request: Request, response: Response): Promise<void> {
   try {

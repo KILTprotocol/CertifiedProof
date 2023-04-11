@@ -3,7 +3,7 @@ import { StatusCodes } from 'http-status-codes';
 import NodeCache from 'node-cache';
 import { DidResourceUri, DidUri, ICredential } from '@kiltprotocol/sdk-js';
 
-import { sessionHeader } from '../endpoints/sessionHeader';
+import { sessionHeader } from '../endpoints/user/sessionHeader';
 
 export interface BasicSession {
   sessionId: string;

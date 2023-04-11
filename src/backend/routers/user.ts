@@ -1,8 +1,8 @@
 import express, { Router } from 'express';
-import { pay } from '../endpoints/pay';
-import { requestAttestation } from '../endpoints/requestAttestation';
-import { session } from '../endpoints/session';
-import { terms } from '../endpoints/terms';
+import { pay } from '../endpoints/user/pay';
+import { requestAttestation } from '../endpoints/user/requestAttestation';
+import { session } from '../endpoints/user/session';
+import { terms } from '../endpoints/user/terms';
 import { configuration } from '../utilities/configuration';
 
 export const userRouter = Router();

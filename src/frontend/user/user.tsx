@@ -29,7 +29,7 @@ import {
   isSupportedCType,
 } from '../../backend/utilities/supportedCTypes';
 import { paths as apiPaths } from '../../backend/endpoints/paths';
-import { sessionHeader } from '../../backend/endpoints/sessionHeader';
+import { sessionHeader } from '../../backend/endpoints/user/sessionHeader';
 
 type FlowError = 'closed' | 'unauthorized' | 'unknown';
 

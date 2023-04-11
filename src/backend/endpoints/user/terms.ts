@@ -1,17 +1,17 @@
 import { Claim, IClaimContents, IQuote, Quote } from '@kiltprotocol/sdk-js';
 import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { configuration } from '../utilities/configuration';
-import { sign } from '../utilities/cryptoCallbacks';
-import { encryptMessageBody } from '../utilities/encryptMessage';
-import { logger } from '../utilities/logger';
-import { Session, sessionMiddleware } from '../utilities/sessionStorage';
+import { configuration } from '../../utilities/configuration';
+import { sign } from '../../utilities/cryptoCallbacks';
+import { encryptMessageBody } from '../../utilities/encryptMessage';
+import { logger } from '../../utilities/logger';
+import { Session, sessionMiddleware } from '../../utilities/sessionStorage';
 import {
   kiltCost,
   SupportedCType,
   supportedCTypes,
-} from '../utilities/supportedCTypes';
-import { paths } from './paths';
+} from '../../utilities/supportedCTypes';
+import { paths } from '../paths';
 
 const TTL = 5 * 60 * 60 * 1000;
 const TERMS = 'https://example.com/terms-and-contions';
