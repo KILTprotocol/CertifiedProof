@@ -28,9 +28,5 @@ export async function revoke(credential: ICredential) {
 
   const attestation = await api.query.attestation.attestations(rootHash);
 
-  if (attestation.isNone) {
-    throw new Error('Unable to fetch attestation from chain');
-  }
-
   return Attestation.fromChain(attestation, rootHash);
 }
