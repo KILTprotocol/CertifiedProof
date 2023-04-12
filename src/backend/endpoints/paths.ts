@@ -8,5 +8,7 @@ export const paths = {
   credentials: {
     list: '/api/credentials',
     item: '/api/credentials/:id',
+    attest: '/api/credentials/:id/attest',
+    revoke: '/api/credentials/:id/revoke',
   },
 };
