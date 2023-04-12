@@ -31,7 +31,7 @@ export async function revoke(credential: ICredential) {
   );
 
   if (attestation.isNone) {
-    throw new Error('Unable to fetch revoked attestation from chain');
+    throw new Error('Unable to fetch attestation from chain');
   }
 
   return Attestation.fromChain(attestation, rootHash);
