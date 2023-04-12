@@ -22,22 +22,25 @@ function Credential() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  const apiPath = generateAdminApiPath(apiPaths.credentials.item, {
-    id,
-  });
-
   const [credential, setCredential] = useState<Credential>();
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    if (credential) {
+      return;
+    }
     (async () => {
       try {
-        setCredential(await ky.get(apiPath).json());
+        setCredential(
+          await ky
+            .get(generateAdminApiPath(apiPaths.credentials.item, { id }))
+            .json(),
+        );
       } catch {
         setError(true);
       }
     })();
-  }, [apiPath]);
+  }, [credential, id]);
 
   const [processing, setProcessing] = useState(false);
   const handleAttest = useCallback(async () => {
@@ -47,7 +50,7 @@ function Credential() {
 
       setCredential(
         await ky
-          .put(apiPath, {
+          .post(generateAdminApiPath(apiPaths.credentials.attest, { id }), {
             timeout: false,
             retry: {
               limit: 10,
@@ -61,22 +64,41 @@ function Credential() {
     } finally {
       setProcessing(false);
     }
-  }, [apiPath]);
+  }, [id]);
 
   const handleReject = useCallback(async () => {
     try {
       setError(false);
 
-      await ky.delete(apiPath);
+      await ky.delete(generateAdminApiPath(apiPaths.credentials.item, { id }));
       navigate(paths.admin.home);
     } catch {
       setError(true);
     }
-  }, [apiPath, navigate]);
+  }, [id, navigate]);
 
   const handleRevoke = useCallback(async () => {
-    // TODO: Revoke attestation
-  }, []);
+    try {
+      setError(false);
+      setProcessing(true);
+
+      setCredential(
+        await ky
+          .post(generateAdminApiPath(apiPaths.credentials.revoke, { id }), {
+            timeout: false,
+            retry: {
+              limit: 10,
+              methods: ['post'],
+            },
+          })
+          .json(),
+      );
+    } catch {
+      setError(true);
+    } finally {
+      setProcessing(false);
+    }
+  }, [id]);
 
   if (!credential) {
     return error ? <p>Credential not found</p> : null;
@@ -102,9 +124,13 @@ function Credential() {
       {attestation && !attestation.revoked && (
         <div>
           <p>Attested ✅</p>
-          <button onClick={handleRevoke}>Revoke</button>
+          <button disabled={processing} onClick={handleRevoke}>
+            Revoke
+          </button>
         </div>
       )}
+
+      {attestation && attestation.revoked && <p>Revoked ❌</p>}
 
       {processing && <p>Processing...</p>}
 
@@ -134,6 +160,9 @@ function Admin() {
   );
   const attestedCredentials = credentials?.filter(
     ([, { attestation }]) => attestation && !attestation.revoked,
+  );
+  const revokedCredentials = credentials?.filter(
+    ([, { attestation }]) => attestation && attestation.revoked,
   );
 
   useEffect(() => {
@@ -170,6 +199,13 @@ function Admin() {
         <section>
           <h2>Attested credentials</h2>
           <Credentials credentials={attestedCredentials} />
+        </section>
+      )}
+
+      {revokedCredentials && revokedCredentials.length > 0 && (
+        <section>
+          <h2>Revoked credentials</h2>
+          <Credentials credentials={revokedCredentials} />
         </section>
       )}
     </section>
