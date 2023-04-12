@@ -26,9 +26,7 @@ export async function revoke(credential: ICredential) {
 
   await Blockchain.signAndSubmitTx(authorized, payer);
 
-  const attestation = await api.query.attestation.attestations(
-    credential.rootHash,
-  );
+  const attestation = await api.query.attestation.attestations(rootHash);
 
   if (attestation.isNone) {
     throw new Error('Unable to fetch attestation from chain');
