@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client';
 
-import { FormEvent, Fragment, useCallback, useEffect, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useState } from 'react';
 import {
   BrowserRouter,
   generatePath,
@@ -129,15 +129,12 @@ function Claim() {
 
   const [session, setSession] = useState<Session>();
 
-  const [status, setStatus] = useState<
-    'start' | 'connected' | 'requested' | 'paid'
-  >('start');
+  const [status, setStatus] = useState<'start' | 'requested' | 'paid'>('start');
 
   const [error, setError] = useState<FlowError>();
 
   const handleConnect = useCallback((session: Session) => {
     setSession(session);
-    setStatus('connected');
   }, []);
 
   const handleClaim = useCallback(
@@ -223,31 +220,20 @@ function Claim() {
   return (
     <section>
       <h2>{title}</h2>
+      <p>Price: {kiltCost[type]} KILT</p>
 
       {status === 'start' && (
-        <Fragment>
-          <ul>
-            {Object.keys(properties).map((property) => (
-              <li key={property}>{property}</li>
-            ))}
-          </ul>
-
-          <Connect onConnect={handleConnect} />
-        </Fragment>
-      )}
-
-      {status === 'connected' && (
         // implement custom claim forms if you want to handle non-string properties
         <form onSubmit={handleClaim}>
           {Object.keys(properties).map((property) => (
             <label key={property}>
-              {property} <input name={property} required />
+              {property}: <input name={property} disabled={!session} required />
             </label>
           ))}
 
-          <p>Price: {kiltCost[type]} KILT</p>
+          {!session && <Connect onConnect={handleConnect} />}
 
-          <button>Submit</button>
+          {session && <button type="submit">Submit</button>}
         </form>
       )}
 
@@ -276,6 +262,15 @@ function Home() {
   return (
     <section>
       <h1>KILT Attester Example</h1>
+
+      <p>
+        This KILT Attester Example demonstrates how to issue credentials for a
+        couple basic claim types which already exist on the KILT blockchain. The
+        user chooses a claim type, enters the claim data, makes a (mock)
+        payment, and the claim is sent to the attester to be reviewed.
+      </p>
+
+      <h2>Choose your claim type:</h2>
 
       <ul>
         {supportedCTypeKeys.map((type) => (

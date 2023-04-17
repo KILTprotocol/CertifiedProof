@@ -185,7 +185,7 @@ function Admin() {
 
   return (
     <section>
-      <h1>Admin</h1>
+      <h1>Admin Page</h1>
       {credentials.length === 0 && <p>No credentials</p>}
 
       {pendingCredentials && pendingCredentials.length > 0 && (
