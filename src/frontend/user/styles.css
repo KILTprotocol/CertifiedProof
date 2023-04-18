@@ -1,3 +1,19 @@
+html {
+  height: 100%;
+  font-family: sans-serif;
+  line-height: 1.5rem;
+  background: url('./logo.svg') no-repeat top 1rem right 1rem;
+}
+
 body {
-  margin: auto;
+  max-width: 36rem;
+  margin: 20vh auto auto;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  font-size: 1rem;
+  cursor: pointer;
+  display: block;
 }
