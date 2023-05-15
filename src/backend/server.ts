@@ -21,10 +21,10 @@ import { userRouter } from './routers/user';
 
   logger.info('Routes configured');
 
-  const host = 'localhost';
-  const { port } = configuration;
+  const host = '0.0.0.0';
+  const { port, baseUri } = configuration;
   const started = app.listen(port, host, () =>
-    logger.info(`Listening on http://${host}:${port}`),
+    logger.info(`Listening on ${baseUri} (host: ${host}, port: ${port})`),
   );
 
   function stop() {

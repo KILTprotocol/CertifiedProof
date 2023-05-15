@@ -51,7 +51,7 @@ export async function getSession(
 
   const { dAppEncryptionKeyUri, challenge, sessionId } =
     await getSessionValues();
-  const dAppName = 'KILT Attester Example';
+  const dAppName = 'CertifiedProof';
 
   const session = await provider.startSession(
     dAppName,

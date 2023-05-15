@@ -261,7 +261,7 @@ function Claim() {
 function Home() {
   return (
     <section>
-      <h1>KILT Attester Example</h1>
+      <h1>CertifiedProof</h1>
 
       <p>
         This KILT Attester Example demonstrates how to issue credentials for a

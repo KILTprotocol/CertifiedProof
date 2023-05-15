@@ -1,4 +1,4 @@
-# KILT Attester Example
+# CertifiedProof dApp: KILT Attester Example
 
 An example web application for attesting KILT credentials using the [KILT Credential API](https://github.com/KILTprotocol/spec-ext-credential-api#verification-workflow)
 
@@ -7,8 +7,7 @@ An example web application for attesting KILT credentials using the [KILT Creden
 The simplest way to try this out (if you know docker) is to start a pre-made docker container:
 
 ```shell
-# TODO: provide real container name
-docker run -p 3000:3000 kilt-attester-example
+docker run -p 3000:3000 kiltprotocol/certified-proof
 ```
 
 Once the container starts, access it on http://localhost:3000. You’ll need a conformant wallet (like [Sporran](https://www.sporran.org/)).
@@ -20,7 +19,7 @@ If you prefer to run the application locally, follow these steps. The applicatio
 The first steps are getting the code and installing its dependencies.
 
 ```shell
-git clone git@github.com:BTE-Trusted-Entity/attester-example.git
+git clone git@github.com:KILTprotocol/CertifiedProof.git
 yarn install
 ```
 
