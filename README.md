@@ -4,7 +4,7 @@ An example web application for attesting KILT credentials using the [KILT Creden
 
 ## Wallet
 
-The following steps assume that you already have a wallet which implements the KILT credential API, such as Sporran.
+The following steps assume that you already have a wallet which implements the [KILT Credential API](https://github.com/KILTprotocol/spec-ext-credential-api), such as Sporran.
 
 [You can follow these steps to run Sporran in developer mode](https://github.com/BTE-Trusted-Entity/sporran-extension/blob/main/docs/external.md)
 
