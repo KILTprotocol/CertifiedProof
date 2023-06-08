@@ -2,6 +2,12 @@
 
 An example web application for attesting KILT credentials using the [KILT Credential API](https://github.com/KILTprotocol/spec-ext-credential-api#verification-workflow)
 
+## Wallet
+
+The following steps assume that you already have a wallet which implements the KILT credential API, such as Sporran.
+
+[You can follow these steps to run Sporran in developer mode](https://github.com/BTE-Trusted-Entity/sporran-extension/blob/main/docs/external.md)
+
 ## Quick test
 
 The simplest way to try this out (if you know docker) is to start a pre-made docker container:
@@ -10,7 +16,7 @@ The simplest way to try this out (if you know docker) is to start a pre-made doc
 docker run -p 3000:3000 kiltprotocol/certified-proof
 ```
 
-Once the container starts, access it on http://localhost:3000. You’ll need a conformant wallet (like [Sporran](https://github.com/BTE-Trusted-Entity/sporran-extension/blob/main/docs/external.md)).
+Once the container starts, access it on http://localhost:3000.
 
 ## Testing in developer mode
 
@@ -97,7 +103,7 @@ Neither are you bound to Express on the backend implementation. (In fact, our ow
 
 The aim of this example is to provide a straightforward and adaptable foundation for your production attester, but it is not intended to be a fully production-ready application in itself.
 
-By default, this example uses Peregrine, which is the testing instance of the KILT blockchain. Peregrine is not intended for real-world usage. The production instance of your attester **must** work with the main KILT blockchain, called Spiritnet. Spiritnet does not share any data with Peregrine, so the DID you created on Peregrine will not exist on Spiritnet. You **should** generate a different set of mnemonics/keys for the production instance of your attester. You will need to run the scripts again to create the DID and the domain linkage credential. To configure scripts to work with Spiritnet, change the value of `BLOCKCHAIN_ENDPOINT` from `wss://peregrine.kilt.io/parachain-public-ws` to `wss://kilt-rpc.dwellir.com`. You should also use the [production version of Sporran](https://www.sporran.org/) which connects to Spiritnet by default.
+By default, this example uses Peregrine, which is the testing instance of the KILT blockchain. Peregrine is not intended for real-world usage. The production instance of your attester **must** work with the main KILT blockchain, called Spiritnet. Spiritnet does not share any data with Peregrine, so the DID you created on Peregrine will not exist on Spiritnet. You **should** generate a different set of mnemonics/keys for the production instance of your attester. You will need to run the scripts again to create the DID and the domain linkage credential. To configure scripts to work with Spiritnet, change the value of `BLOCKCHAIN_ENDPOINT` from `wss://peregrine.kilt.io/parachain-public-ws` to `wss://kilt-rpc.dwellir.com`. You should also use the [public version of Sporran](https://www.sporran.org/) which connects to Spiritnet by default.
 
 The example backend uses a simple in-memory storage for credential data. Your production application should implement a database if you plan to store credential data. You should also be aware of GDPR requirements when storing the data of a user.
 
