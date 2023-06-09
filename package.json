@@ -20,9 +20,9 @@
     "dev-start": "supervisor --watch dist/backend/ -- --enable-source-maps dist/backend/server.js"
   },
   "dependencies": {
-    "@kiltprotocol/sdk-js": "^0.31.1",
-    "@kiltprotocol/vc-export": "^0.31.1",
-    "@polkadot/util-crypto": "^10.4.2",
+    "@kiltprotocol/sdk-js": "^0.33.0",
+    "@kiltprotocol/vc-export": "^0.33.0",
+    "@polkadot/util-crypto": "^12.2.2",
     "body-parser": "^1.20.2",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
