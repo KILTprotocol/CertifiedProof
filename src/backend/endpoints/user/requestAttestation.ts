@@ -38,15 +38,16 @@ async function handler(request: Request, response: Response): Promise<void> {
       logger.debug('Quote agreement verified');
     }
 
-    await Credential.verifyCredential(credential);
-    logger.debug('Credential data structure verified');
-
     const cTypes = Object.values(supportedCTypes);
     const cTypeId = CType.hashToId(credential.claim.cTypeHash);
-    if (!cTypes.find(({ $id }) => $id === cTypeId)) {
+    const ctype = cTypes.find(({ $id }) => $id === cTypeId);
+    if (!ctype) {
       response.status(StatusCodes.FORBIDDEN).send('Unsupported CType');
     }
     logger.debug('CType supported');
+
+    await Credential.verifyWellFormed(credential, { ctype });
+    logger.debug('Credential data structure verified');
 
     const { session } = request as Request & { session: Session };
     setSession({ ...session, credential });
