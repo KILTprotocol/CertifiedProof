@@ -16,7 +16,10 @@ The simplest way to try this out (if you know docker) is to start a pre-made doc
 docker run -p 3000:3000 kiltprotocol/certified-proof
 ```
 
-Once the container starts, access it on http://localhost:3000.
+Once the container starts, access:
+
+- the **user site** under http://localhost:3000
+- the **admin site** under http://localhost:3000/admin
 
 ## Testing in developer mode
 
@@ -52,7 +55,6 @@ yarn dev-start
 ### Real coins and testing coins
 
 The KILT blockchain with real coins and real attestations is called Spiritnet. This example by default uses a testing blockchain called Peregrine, [more details on this below](#production-configuration). This documentation uses the term “coins” to refer to the coins on both blockchains.
-
 
 ### One-time steps
 
