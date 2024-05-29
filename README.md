@@ -16,10 +16,19 @@ The simplest way to try this out (if you know docker) is to start a pre-made doc
 docker run -p 3000:3000 kiltprotocol/certified-proof
 ```
 
-Once the container starts, access:
+Once the container starts, access it under http://localhost:3000.
 
-- the **user site** under http://localhost:3000
-- the **admin site** under http://localhost:3000/admin
+## Interacting with the website:
+
+While the project is running, in any of it's modalities, the different roles can interact with:
+
+- the **user site** under **"http://`URL`:`PORT`"** ; _by default:_ http://localhost:3000.
+- the **admin site** under **"http://`URL`:`PORT`/admin"** ; _by default:_ http://localhost:3000/admin.
+
+The admin site can only be access after entering the `ADMIN_USERNAME` and `ADMIN_PASSWORD` in the pop-up window.
+
+Where `PORT`, `URL`, `ADMIN_USERNAME` and `ADMIN_PASSWORD` are environment constants defined on the root's directory `.env`-file.
+
 
 ## Testing in developer mode
 
