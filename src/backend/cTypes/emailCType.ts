@@ -1,4 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
+import type { ICType } from '@kiltprotocol/types';
 
 export const emailCType: ICType = {
   $schema: 'http://kilt-protocol.org/draft-01/ctype#',
