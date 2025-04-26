@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import { config } from 'dotenv';
 import { pino } from 'pino';
-import { DidUri } from '@kiltprotocol/sdk-js';
+import { DidUri } from '@kiltprotocol/kilt-extension-api/node_modules/@kiltprotocol/types';
 
 config();
 

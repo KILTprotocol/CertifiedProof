@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { IAttestation, ICredential } from '@kiltprotocol/sdk-js';
+import { IAttestation, ICredential } from '@kiltprotocol/types';
 
 export class NotFoundError extends Error {}
 

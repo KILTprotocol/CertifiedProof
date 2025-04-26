@@ -1,4 +1,4 @@
-import type { ICType } from '@kiltprotocol/sdk-js';
+import type { ICType } from '@kiltprotocol/types';
 
 import { emailCType } from '../cTypes/emailCType';
 

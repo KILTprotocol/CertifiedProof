@@ -1,4 +1,7 @@
-import type { DidResourceUri, IEncryptedMessage } from '@kiltprotocol/sdk-js';
+import {
+  DidResourceUri,
+  IEncryptedMessage,
+} from '@kiltprotocol/kilt-extension-api/node_modules/@kiltprotocol/types';
 
 import {
   checkSession,
