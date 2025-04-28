@@ -11,7 +11,8 @@ import {
 } from 'react-router-dom';
 
 import ky from 'ky';
-import { IClaimContents, IEncryptedMessage } from '@kiltprotocol/sdk-js';
+import { IClaimContents } from '@kiltprotocol/types';
+import { IEncryptedMessage } from '@kiltprotocol/kilt-extension-api/node_modules/@kiltprotocol/types';
 
 import {
   apiWindow,

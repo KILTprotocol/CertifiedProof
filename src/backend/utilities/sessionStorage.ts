@@ -1,8 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import NodeCache from 'node-cache';
-import { DidResourceUri, DidUri, ICredential } from '@kiltprotocol/sdk-js';
-
+import { ICredential } from '@kiltprotocol/types';
+import {
+  DidResourceUri,
+  DidUri,
+} from '@kiltprotocol/kilt-extension-api/node_modules/@kiltprotocol/types';
 import { sessionHeader } from '../endpoints/user/sessionHeader';
 
 export interface BasicSession {
